@@ -32,4 +32,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: docker build -t app .
-      - run: docker run --rm app
+      - run: docker run --rm app --help
+      # End to end in the container: clean data passes, dirty data must fail the gate.
+      - run: |
+          mkdir -p data && chmod 777 data
+          docker run --rm -v "$PWD/data:/data" --entrypoint shopflow-datagen app --scale 0.1 --out /data/clean
+          docker run --rm -v "$PWD/data:/data" --entrypoint shopflow-datagen app --scale 0.1 --out /data/dirty --dirty
+          docker run --rm -v "$PWD/data:/data" app check /data/clean --rules rules/shopflow.yml --quiet
+          if docker run --rm -v "$PWD/data:/data" app check /data/dirty --rules rules/shopflow.yml --quiet; then
+            echo "dirty data should have failed the gate" && exit 1
+          fi
+          docker run --rm -v "$PWD/data:/data" app evaluate /data/dirty --rules rules/shopflow.yml

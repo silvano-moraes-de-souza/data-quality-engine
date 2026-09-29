@@ -1,0 +1,129 @@
+{
+  "machine": {
+    "os": "Windows 11",
+    "python": "3.12.14",
+    "cpu": "Intel64 Family 6 Model 141 Stepping 1, GenuineIntel",
+    "cores_physical": 6,
+    "cores_logical": 12,
+    "cpu_max_mhz": 2688,
+    "ram_gb": 23.8
+  },
+  "results": {
+    "scale 1": [
+      {
+        "problem": "customers.email.null",
+        "check": "not_null(customers.email)",
+        "injected": 211,
+        "detected": 211,
+        "covered": true,
+        "exact": true
+      },
+      {
+        "problem": "orders.duplicate_rows",
+        "check": "unique(orders.order_id)",
+        "injected": 505,
+        "detected": 505,
+        "covered": true,
+        "exact": true
+      },
+      {
+        "problem": "order_items.price_outlier",
+        "check": "matches_reference(order_items.unit_price_cents)",
+        "injected": 160,
+        "detected": 160,
+        "covered": true,
+        "exact": true
+      },
+      {
+        "problem": "order_items.orphan_product_id",
+        "check": "foreign_key(order_items.product_id)",
+        "injected": 175,
+        "detected": 175,
+        "covered": true,
+        "exact": true
+      },
+      {
+        "problem": "orders.schema_drift_rows",
+        "check": "schema(orders)",
+        "injected": 20101,
+        "detected": 20101,
+        "covered": true,
+        "exact": true
+      },
+      {
+        "problem": "orders.channel.null",
+        "check": "not_null(orders.channel)",
+        "injected": 788,
+        "detected": 788,
+        "covered": true,
+        "exact": true
+      },
+      {
+        "problem": "orders.sales_channel.null",
+        "check": "-",
+        "injected": 189,
+        "detected": 0,
+        "covered": false,
+        "exact": true
+      }
+    ],
+    "scale 10": [
+      {
+        "problem": "customers.email.null",
+        "check": "not_null(customers.email)",
+        "injected": 1988,
+        "detected": 1988,
+        "covered": true,
+        "exact": true
+      },
+      {
+        "problem": "orders.duplicate_rows",
+        "check": "unique(orders.order_id)",
+        "injected": 4921,
+        "detected": 4921,
+        "covered": true,
+        "exact": true
+      },
+      {
+        "problem": "order_items.price_outlier",
+        "check": "matches_reference(order_items.unit_price_cents)",
+        "injected": 1789,
+        "detected": 1789,
+        "covered": true,
+        "exact": true
+      },
+      {
+        "problem": "order_items.orphan_product_id",
+        "check": "foreign_key(order_items.product_id)",
+        "injected": 1697,
+        "detected": 1697,
+        "covered": true,
+        "exact": true
+      },
+      {
+        "problem": "orders.channel.null",
+        "check": "not_null(orders.channel)",
+        "injected": 8990,
+        "detected": 8990,
+        "covered": true,
+        "exact": true
+      },
+      {
+        "problem": "orders.schema_drift_rows",
+        "check": "schema(orders)",
+        "injected": 100499,
+        "detected": 100499,
+        "covered": true,
+        "exact": true
+      },
+      {
+        "problem": "orders.sales_channel.null",
+        "check": "-",
+        "injected": 991,
+        "detected": 0,
+        "covered": false,
+        "exact": true
+      }
+    ]
+  }
+}
