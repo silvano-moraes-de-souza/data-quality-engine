@@ -1,0 +1,58 @@
+# Data contract and quality rules for the shopflow-datagen dataset.
+# severity: error fails the run (exit code 1), warn only lowers the score.
+
+tables:
+  customers:
+    columns: [customer_id, full_name, email, state, signup_at]
+    checks:
+      - {type: unique, column: customer_id}
+      - {type: not_null, column: customer_id}
+      - {type: not_null, column: email, severity: warn}
+      - type: accepted_values
+        column: state
+        values: [AC, AL, AP, AM, BA, CE, DF, ES, GO, MA, MT, MS, MG, PA, PB, PR, PE, PI,
+                 RJ, RN, RS, RO, RR, SC, SP, SE, TO]
+
+  products:
+    columns: [product_id, sku, name, category, brand, price_cents, cost_cents, active]
+    checks:
+      - {type: unique, column: product_id}
+      - {type: unique, column: sku}
+      - {type: range, column: price_cents, min: 1}
+      - {type: range, column: cost_cents, min: 0}
+
+  orders:
+    columns: [order_id, customer_id, ordered_at, status, channel, subtotal_cents,
+              discount_cents, shipping_cents, total_cents, delivered_at]
+    checks:
+      - {type: unique, column: order_id}
+      - {type: not_null, column: channel, severity: warn}
+      - {type: foreign_key, column: customer_id, references: customers.customer_id}
+      - {type: accepted_values, column: status,
+         values: [pending, shipped, delivered, canceled, returned]}
+      - {type: accepted_values, column: channel, values: [web, app, marketplace]}
+      - {type: range, column: total_cents, min: 0}
+      # delivered_at is null by design until an order is delivered
+      - {type: not_null, column: delivered_at, where: {status: [delivered, returned]}}
+
+  order_items:
+    columns: [order_item_id, order_id, product_id, quantity, unit_price_cents,
+              line_total_cents]
+    checks:
+      - {type: unique, column: order_item_id}
+      - {type: foreign_key, column: order_id, references: orders.order_id}
+      - {type: foreign_key, column: product_id, references: products.product_id}
+      - {type: range, column: quantity, min: 1, max: 100}
+      - type: matches_reference
+        column: unit_price_cents
+        key: product_id
+        references: products.price_cents
+      - {type: outlier_iqr, column: unit_price_cents, k: 3, log: true, severity: warn}
+
+  payments:
+    columns: [payment_id, order_id, method, installments, status, amount_cents, paid_at]
+    checks:
+      - {type: unique, column: payment_id}
+      - {type: foreign_key, column: order_id, references: orders.order_id}
+      - {type: accepted_values, column: method, values: [pix, credit_card, boleto, debit_card]}
+      - {type: range, column: installments, min: 1, max: 12}
