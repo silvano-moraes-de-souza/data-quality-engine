@@ -6,7 +6,14 @@ readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "Silvano Moraes de Souza" }]
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "polars>=1.0",
+    "pyyaml>=6.0",
+    "shopflow-datagen",
+]
+
+[project.scripts]
+dq-engine = "data_quality_engine.cli:main"
 
 [dependency-groups]
 dev = [
@@ -36,3 +43,6 @@ ignore = ["PLR0913", "PLR2004"]
 testpaths = ["tests"]
 pythonpath = ["."]
 addopts = "-q --cov=data_quality_engine --cov-report=term-missing"
+
+[tool.uv.sources]
+shopflow-datagen = { git = "https://github.com/silvano-moraes-de-souza/shopflow-datagen" }
