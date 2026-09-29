@@ -7,6 +7,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 COPY --from=ghcr.io/astral-sh/uv:0.12 /uv /usr/local/bin/uv
 
+# git is needed to install shopflow-datagen from its repository.
+RUN apt-get update && apt-get install -y --no-install-recommends git \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 # Dependencies first so code changes don't invalidate the layer.
@@ -14,6 +18,7 @@ COPY pyproject.toml uv.lock README.md ./
 RUN uv sync --frozen --no-dev --no-install-project
 
 COPY src ./src
+COPY rules ./rules
 RUN uv sync --frozen --no-dev
 
 RUN useradd --create-home --uid 1000 app && chown -R app /app
@@ -21,4 +26,5 @@ USER app
 
 ENV PATH="/app/.venv/bin:$PATH"
 
-CMD ["python", "-c", "import data_quality_engine; print(data_quality_engine.__version__)"]
+ENTRYPOINT ["dq-engine"]
+CMD ["--help"]

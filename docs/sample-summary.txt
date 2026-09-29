@@ -1,0 +1,16 @@
+DATA QUALITY SCORE
+
+████████████████░░░░ 82%
+
+Rows analyzed                394,856
+Tables / columns            5 / 38   
+Checks                            30  (23 pass, 3 warn, 4 fail)
+Null violations                  999
+Duplicate rows                   505
+Orphan references                175
+Schema drift rows             20,101
+Value mismatches                 160
+Statistical outliers           1,109
+Elapsed                        0.32s
+
+STATUS: FAIL
